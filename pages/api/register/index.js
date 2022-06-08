@@ -1,7 +1,7 @@
 import prisma from "../../../prisma/prisma";
 
 async function register(data) {
-  await prisma.users.create({
+  await prisma.query.create({
     data,
   });
 

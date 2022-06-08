@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import GoogleLogin from "./GoogleLogin";
+import Modal from "./PopupModel";
+import Navbar from "./Navbar";
 
 async function makeRequest(query) {
-  console.log(query);
   const config = {
     method: "POST",
     headers: {
@@ -15,7 +16,7 @@ async function makeRequest(query) {
   };
   const response = await fetch("/api/query/addquery", config);
   if (response.ok) {
-    console.log(await response.json());
+    return true;
   }
 }
 
@@ -23,6 +24,7 @@ const BookConsultant = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
+  const [modal, setModal] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phNo, setphNo] = useState("");
@@ -37,7 +39,7 @@ const BookConsultant = () => {
     }
   }, [session]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     let query = {
       name: name,
@@ -46,12 +48,14 @@ const BookConsultant = () => {
       subject: subject,
       body: body,
     };
-    // console.log(query);
-    makeRequest(query);
+    let isModal = await makeRequest(query);
+    if (isModal === true) {
+      setModal(true);
+    }
   };
-
   return (
     <div className="bg-gray-200 w-full h-screen">
+      <Navbar />
       {name && (
         <form onSubmit={handleSubmit}>
           <div className="container mx-auto flex align-middle justify-center flex-col md:w-1/2 lg:w-1/3 bg-white rounded-lg shadow-md z-10 p-8">
@@ -148,6 +152,7 @@ const BookConsultant = () => {
         </form>
       )}
       {!name && <GoogleLogin />}
+      {modal && <Modal initial={true} />}
     </div>
   );
 };

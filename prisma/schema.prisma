@@ -28,5 +28,4 @@ model Queries {
   phoneNumber String   @db.Char(15)
   subject     String   @db.VarChar(50)
   message     String   @db.VarChar(500)
-  userId      Int
 }
